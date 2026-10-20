@@ -170,6 +170,8 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
     public void loadUrl(String url, Map<String, String> additionalHttpHeaders) { load(url, additionalHttpHeaders); }
     private void load(String url, Map<String, String> additionalHttpHeaders) {
         if (mDestroyed || url == null) return;
+        // WebKit captures page preferences at navigation start; do not wait for the posted settings update.
+        pushSettings();
         Log.d(TAG, "loadUrl " + url);
         if (url.startsWith("javascript:")) { eval(Uri.decode(url.substring(11)), null); return; }
         url = normalize(url);
@@ -205,11 +207,15 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
     }
     public void postUrl(String url, byte[] postData) {
         if (mDestroyed) return;
+        // WebKit captures page preferences at navigation start; do not wait for the posted settings update.
+        pushSettings();
         mUrl = url;
         husk.Web.load(mId, toHost(url), null, postData);
     }
     public void loadData(String data, String mimeType, String encoding) {
         if (mDestroyed) return;
+        // WebKit captures page preferences at navigation start; do not wait for the posted settings update.
+        pushSettings();
         Log.d(TAG, "loadData " + mimeType);
         byte[] bytes = "base64".equalsIgnoreCase(encoding) ? android.util.Base64.decode(data, android.util.Base64.DEFAULT) : (data == null ? "" : data).getBytes(java.nio.charset.StandardCharsets.UTF_8);
         mUrl = "data:" + (mimeType == null ? "text/html" : mimeType) + "," + (data == null ? "" : data.substring(0, Math.min(data.length(), 64)));
@@ -217,7 +223,9 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
     }
     public void loadDataWithBaseURL(String baseUrl, String data, String mimeType, String encoding, String historyUrl) {
         if (mDestroyed) return;
-        Log.d(TAG, "loadDataWithBaseURL " + baseUrl);
+        // WebKit captures page preferences at navigation start; do not wait for the posted settings update.
+        pushSettings();
+        Log.d(TAG, "loadDataWithBaseURL " + baseUrl + " JavaScript=" + mSettings.getJavaScriptEnabled());
         byte[] bytes = husk.AnkiReviewerAssets.prepare(data, mimeType).getBytes(java.nio.charset.StandardCharsets.UTF_8);
         String base = baseUrl == null || baseUrl.startsWith("data:") ? null : baseUrl;
         mUrl = historyUrl != null ? historyUrl : base != null ? base : "about:blank";
@@ -346,6 +354,7 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
     }
     public void destroy() {
         if (mDestroyed) return;
+        Log.d(TAG, "destroy native WebView id=" + mId);
         mDestroyed = true;
         synchronized (sViews) { sViews.remove(mId); }
         husk.Web.destroy(mId);
@@ -779,8 +788,12 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
         // a dialog, popup or menu over the page takes the touches: the page only gets them while its window is the top one
         husk.ViewRoot root = visible ? husk.ViewRoot.of(getRootView()) : null;
         boolean touchable = root != null && root == husk.ViewRoot.topTouchable();
+        // UIKit otherwise gives every touch within the page's rectangle to WKWebView,
+        // including touches on AnkiDroid's Android canvas and toolbar in the same window.
+        if (touchable && husk.AnkiWhiteboardInput.blocksNativeWebTouches(getRootView())) touchable = false;
         if (!force && visible == mFrameVisible && touchable == mFrameTouchable && (!visible || (loc[0] == mFrameX && loc[1] == mFrameY && getWidth() == mFrameW && getHeight() == mFrameH))) return;
         mFrameVisible = visible; mFrameTouchable = touchable; mFrameX = loc[0]; mFrameY = loc[1]; mFrameW = getWidth(); mFrameH = getHeight();
+        if ("com.ichi2.anki".equals(husk.Native.packageName())) Log.d(TAG, "native frame id=" + mId + " visible=" + visible + " touchable=" + touchable);
         husk.Web.frame(mId, loc[0], loc[1], getWidth(), getHeight(), visible, touchable);
     }
     /** @hide A window came or went: every page says again whether it takes touches. */
