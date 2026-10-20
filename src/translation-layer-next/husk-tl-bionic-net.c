@@ -37,7 +37,7 @@
 enum {
     G_AF_UNIX = 1, G_AF_INET = 2, G_AF_INET6 = 10,
     G_SOCK_NONBLOCK = 0x800, G_SOCK_CLOEXEC = 0x80000,
-    G_SOL_SOCKET = 1,
+    G_SOL_SOCKET = 1, G_SO_DOMAIN = 39,
     G_EAFNOSUPPORT = 97, G_ENOPROTOOPT = 92,
 };
 
@@ -381,6 +381,22 @@ static int b_setsockopt(int fd, int level, int name, const void *val, socklen_t 
 
 static int b_getsockopt(int fd, int level, int name, void *val, socklen_t *len)
 {
+    // libcore checks SO_DOMAIN before accept() to distinguish Unix and Internet sockets.
+    // Darwin has no public equivalent; getsockname supplies the same socket family.
+    if (level == G_SOL_SOCKET && name == G_SO_DOMAIN) {
+        if (!len || (*len && !val)) { tl_set_guest_errno(14 /* EFAULT */); return -1; }
+        struct sockaddr_storage address;
+        socklen_t address_len = sizeof(address);
+        TL_ERRNO_BEGIN();
+        int result = getsockname(fd, (struct sockaddr *)&address, &address_len);
+        TL_ERRNO_END();
+        if (result < 0) return result;
+        int domain = dom_from_darwin(address.ss_family);
+        socklen_t copied = *len < sizeof(domain) ? *len : sizeof(domain);
+        if (copied) memcpy(val, &domain, copied);
+        *len = copied;
+        return 0;
+    }
     int dl, dn;
     if (!opt_to_darwin(level, name, &dl, &dn)) { tl_set_guest_errno(G_ENOPROTOOPT); return -1; }
     TL_ERRNO_BEGIN();
