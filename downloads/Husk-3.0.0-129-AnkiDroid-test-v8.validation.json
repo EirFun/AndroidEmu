@@ -1,0 +1,69 @@
+{
+  "v7_ipa_sha256": "e0c958cf1844099b512e012b5bff0ca03725d0e24bca320c4f6e7e35d21b230a",
+  "patched_ipa_sha256": "e230de88d808b265cf82760d6ff9f2ce8d932a8d06376e32acde0edb40c8e98d",
+  "size_bytes": 140082606,
+  "added_framework_methods": [
+    [
+      "Lhusk/AnkiReviewerAssets;",
+      "withDiagnostics",
+      "(Ljava/lang/String;)Ljava/lang/String;"
+    ],
+    [
+      "Lhusk/AnkiSocketDiagnostics;",
+      "<init>",
+      "()V"
+    ],
+    [
+      "Lhusk/AnkiSocketDiagnostics;",
+      "close",
+      "()V"
+    ],
+    [
+      "Lhusk/AnkiSocketDiagnostics;",
+      "flush",
+      "()V"
+    ],
+    [
+      "Lhusk/AnkiSocketDiagnostics;",
+      "install",
+      "()V"
+    ],
+    [
+      "Lhusk/AnkiSocketDiagnostics;",
+      "publish",
+      "(Ljava/util/logging/LogRecord;)V"
+    ]
+  ],
+  "changed_existing_methods": [
+    [
+      "Landroid/webkit/WebView;",
+      "eval",
+      "(Ljava/lang/String; Landroid/webkit/ValueCallback;)V"
+    ],
+    [
+      "Landroid/webkit/WebView;",
+      "serve",
+      "(I Ljava/lang/String; Ljava/lang/String; Z Ljava/util/Map;)V"
+    ],
+    [
+      "Landroid/webkit/WebView;",
+      "loadDataWithBaseURL",
+      "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String;)V"
+    ],
+    [
+      "Lhusk/AnkiReviewerAssets;",
+      "prepare",
+      "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"
+    ]
+  ],
+  "compiled_dex_sha256": "33dcee693b94a557a0c354db385f7020d0bea2d0ee95f7239c21e4f291891962",
+  "validation": "Only four intended existing methods and six helper methods differ from v7; all other existing methods and retained IPA entries compared; ZIP integrity passed",
+  "requires_resigning": true,
+  "device_tested": false,
+  "blank_card_fix_device_verified": false,
+  "retry_guard_device_verified": false,
+  "native_socket_crash_fixed": false,
+  "pencil_tool_type_fixed": false,
+  "whiteboard_input_device_verified": false,
+  "back_freeze_fixed": false
+}

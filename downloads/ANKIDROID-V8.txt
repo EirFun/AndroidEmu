@@ -1,0 +1,61 @@
+Husk AnkiDroid test v8: socket retry guard, local reviewer resources and DOM logs
+
+Download Husk-3.0.0-129-AnkiDroid-test-v8.ipa using Download raw file.
+Size: 140,082,606 bytes (about 140 MB). Install through SideStore as an update,
+re-enable JIT and restart Husk. Keep the existing APK and collection.
+Expected build label: dbc202a+ankidroid-test-v8.
+
+What the v7 report establishes:
+- 'Husk reviewer ready: jquery=function _showQuestion=function' confirms that
+  reviewer scripts now initialize. No missing-function error appears in this run.
+- The user can draw. Whiteboard input routing is improved; Pencil tool-type
+  identification is still unchanged.
+- Available memory falls from about 3.9 GB to 317 MiB, including intervals with
+  zero new frames. A fatal signal 11 occurs on NanoHttpd Main Listener, followed
+  by repeated failures to allocate 80 bytes. Drawing is not established as the
+  cause. This matches the previously observed listener/memory failure pattern.
+- The log does not yet establish whether card HTML rendered invisibly or a
+  resource/script was still pending.
+
+V8 changes:
+1. NanoHTTPD's listener catches IOExceptions and immediately retries, logging
+   only at FINE level. V8 enables that level on its logger and installs a handler
+   that logs the first three failed accepts, then every hundredth, and sleeps
+   250 ms on that listener thread after each such failure. Successful accepts
+   are not delayed. Other apps and unrelated logger levels are unchanged.
+   This bounds a suspected allocation-heavy retry loop; it does not repair the
+   native socket implementation. The exact socket error and effectiveness on
+   the iPad remain to be confirmed. Logger name 'bv' is verified for this exact
+   official AnkiDroid 2.26.0alpha6 APK; unobfuscated NanoHTTPD is also supported.
+2. For AnkiDroid HTML with an exact http://127.0.0.1:<port>/ base, register that
+   origin with Husk's existing WebKit scheme mapping. Relative reviewer GETs
+   now reach AnkiDroid's shouldInterceptRequest handler, which already serves
+   MathJax and media from assets/files. Previously these went directly to the
+   local HTTP listener. MathJax's pending script load can block _showQuestion's
+   render queue; whether that explains this card is unverified. POST backend
+   calls can still depend on the actual local HTTP server.
+3. After _showQuestion/_showAnswer calls, log DOM state after 1.5 and 6 seconds:
+   qa existence, text/HTML length, opacity, MathJax state and scheme. No card
+   text or credentials are logged. Internal /_anki/ resource requests are logged.
+
+All v7 startup, login, editor, storage, ACRA, script-loading, settings and
+whiteboard touch changes remain. No native binaries were rebuilt. Back-button
+freezing, Pencil identification and the underlying socket bug remain unresolved.
+
+Host validation passed: helper compilation, failed-accept backoff/idempotent
+installation/other-app isolation, navigation settings ordering, localhost URL
+round trip and other-origin preservation. The actual APK's scripts render a
+plain question/answer and a MathJax card in Chromium through equivalent resource
+URL mappings. The keyboard bridge is a host-only test substitute. This does not
+validate iOS WebKit, actual socket behavior or long-session memory use.
+
+Package validation: exactly four existing methods change (WebView HTML loading,
+eval and resource serving; AnkiReviewerAssets.prepare), plus six helper methods.
+All other existing methods compare after normalizing string-opcode widths and
+logical branch destinations. Native binaries and other retained IPA entries
+match v7 except the build label; ZIP integrity passes.
+
+Test a plain Basic card first, then your original card and brief whiteboard use.
+Please send the fresh full v8 report even if the card remains blank: the socket
+error and 'Husk card DOM' lines should make the next diagnosis more specific.
+Avoid a prolonged drawing session until memory behavior is confirmed.
