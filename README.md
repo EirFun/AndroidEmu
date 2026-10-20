@@ -1,5 +1,17 @@
 # Husk
 
+This source copy includes an experimental **AnkiDroid startup fix** for Husk 3.0.0 build 129.
+
+- [Download the patched IPA](https://github.com/EirFun/AndroidEmu/raw/refs/heads/husk-attachfix/downloads/Husk-3.0.0-129-attachfix-resign-required.ipa) — requires re-signing with your sideloader.
+- [Installation, backup, and test instructions](downloads/INSTALL.txt).
+- [Validation results](downloads/Husk-3.0.0-129-attachfix-resign-required.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
+
+The IPA exchanges the two Application startup calls in the official release's Java framework. It is not a full native iOS rebuild. **AnkiWeb login and card editing are not yet verified.** Host Java compilation, a context-attachment probe, and archive/DEX integrity checks passed. Back up existing data before installing. This Java framework change applies to Husk's compatibility runtime, not Android running inside a full VM.
+
+Upstream: [Leviidev/Husk](https://github.com/Leviidev/Husk), source base `2df074b3083ce2913922995f2f99249f1498b554`, with fix commit `7a0e0f3d2466dc2d3e77a6a2ad72676be0aff5a4`. Upstream history and license are retained. This repository is a source copy, not a GitHub-created fork.
+
+The original upstream README follows.
+
 <p align="center">
   <a href="https://trendshift.io/repositories/233057?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-233057" target="_blank" rel="noopener noreferrer">
     <img src="https://trendshift.io/api/badge/trendshift/repositories/233057/daily?language=Swift" alt="Leviidev/Husk | Trendshift" width="250" height="55"/>

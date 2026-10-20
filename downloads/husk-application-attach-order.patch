@@ -1,0 +1,28 @@
+From 7a0e0f3d2466dc2d3e77a6a2ad72676be0aff5a4 Mon Sep 17 00:00:00 2001
+From: osbal <abdulsaepul93@gmail.com>
+Date: Tue, 20 Oct 2026 11:47:32 +0000
+Subject: [PATCH] Fix Application publication order during base context
+ attachment
+
+---
+ src/java-framework/src/husk/AppRunner.java | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/java-framework/src/husk/AppRunner.java b/src/java-framework/src/husk/AppRunner.java
+index 97f9469..4170a12 100644
+--- a/src/java-framework/src/husk/AppRunner.java
++++ b/src/java-framework/src/husk/AppRunner.java
+@@ -103,8 +103,9 @@ public final class AppRunner {
+         sApp = app;
+         android.app.ActivityThread.huskBind(app);
+         Application.huskSet(app);
+-        ContextImpl.setApplication(app);
+         app.huskAttach(base);
++        // attachBaseContext may wrap the base; do not let that wrapper delegate back to this Application.
++        ContextImpl.setApplication(app);
+         installProviders(app);
+         Looper.setInputSink(AppRunner::deliver);
+         applyInsets();
+-- 
+2.52.0
+

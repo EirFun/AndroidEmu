@@ -1,0 +1,23 @@
+{
+  "instruction_file_offset": "0x3b8dd4",
+  "before": [
+    "v5, Lhusk/ContextImpl;->setApplication(Landroid/content/Context;)V",
+    "v5, v0, Landroid/app/Application;->huskAttach(Landroid/content/Context;)V"
+  ],
+  "after": [
+    "v5, v0, Landroid/app/Application;->huskAttach(Landroid/content/Context;)V",
+    "v5, Lhusk/ContextImpl;->setApplication(Landroid/content/Context;)V"
+  ],
+  "original_ipa_sha256": "112a1ddbb3143ae25e80c18c5b195b6dfa5067d66cbf99d2188fc03f4ab0f61d",
+  "patched_ipa_sha256": "b09c99740d3e41a0ed11e5dedc45650cb3324cea4997c1bd297b00b39a647fc4",
+  "original_dex_sha256": "aadfd5ae8deb861b834aaba94f71a8c9ccf7ca6afb81e61e9bbaa6145954794c",
+  "patched_dex_sha256": "763514d241387c508e5bf10c8ec188886d752bae55a306965c68ebedb7c47c72",
+  "removed_stale_signature_entries": [
+    "Payload/Husk.app/_CodeSignature/",
+    "Payload/Husk.app/_CodeSignature/CodeResources"
+  ],
+  "validation": "DEX reparsed; byte changes bounded; every other retained IPA entry compared byte-for-byte; ZIP integrity passed",
+  "device_tested": false,
+  "login_verified": false,
+  "requires_resigning": true
+}

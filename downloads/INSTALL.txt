@@ -1,0 +1,58 @@
+Experimental Husk 3.0.0 (129) Application-attach fix
+
+File: Husk-3.0.0-129-attachfix-resign-required.ipa
+
+This is the official release IPA with its embedded Java framework narrowly
+patched. It is not a complete native iOS rebuild. The two adjacent calls in
+AppRunner.run now attach the Application before exposing it through ContextImpl.
+The original iOS resource seal has been removed; the IPA MUST be re-signed by
+your sideloader. All native executables and their embedded entitlements were
+preserved. Installation and device operation have not been tested.
+
+Windows installation:
+1. Export/backup AnkiDroid collections and valuable Husk app data first.
+2. Use your existing IPA sideloader, for example Sideloadly on Windows, to sign
+   and install this IPA with your own Apple account/profile. Do not install it
+   as though it were already signed for your iPad.
+3. Prefer updating the existing installation with the same bundle ID and signing
+   identity. Do not uninstall the current app unless you have a usable backup.
+   Whether an update preserves the data depends on your sideloader/profile.
+4. Fully close and reopen Husk, then enable JIT using your existing method.
+5. Check the report build identity for dbc202a+attach-order-fix.
+6. Test AnkiDroid startup. To validate the Husk fix independently, use an official
+   APK in an isolated/test installation, rather than your ProfileManager-bypass
+   APK. Keep your working patched APK and data backup available.
+7. Capture one sign-in attempt and a separate add-card attempt. This IPA only
+   fixes Application attach ordering. It does not disable ACRA, change the editor
+   preview preference, add login logging, fix missing unwind symbols, or establish
+   working AnkiWeb synchronization.
+
+Important mode distinction: AppRunner is Husk's Java compatibility framework.
+If AnkiDroid is actually launched inside a booted Android/LineageOS VM, this
+particular change does not alter that VM's Android Application startup.
+
+Validation performed:
+- Host Java framework compilation and isolated context-attachment probe passed.
+- The original release SHA-256 and DEX SHA-256 were pinned by the repacking tool.
+- DEX was reparsed, its SHA-1/Adler-32 regenerated, and changes bounded to the
+  original two instructions plus integrity fields.
+- IPA ZIP integrity passed. Other retained entries are unchanged except the
+  local build label in Info.plist. See the .validation.json file for hashes.
+- No iPad installation, JIT, AnkiDroid login, add-card, or native Xcode test ran.
+
+Reproduce from Windows (Python 3 installed):
+  py -m venv husk-tools
+  .\husk-tools\Scripts\python.exe -m pip install androguard==4.1.4
+  curl.exe -fL https://github.com/Leviidev/Husk/releases/download/3.0/Husk.ipa -o Husk-original.ipa
+  .\husk-tools\Scripts\python.exe repack_husk.py Husk-original.ipa Husk-attachfix.ipa
+
+The script refuses an input whose hash differs from the inspected release.
+It retains Husk's original bundle ID and original version/build numbers and
+adds a local patch label. Choose a new output filename for each run.
+
+Upstream source patch: husk-application-attach-order.patch
+Apply on a clean Husk source checkout with:
+  git am husk-application-attach-order.patch
+
+The source fix is committed locally on fix/application-attach-order.
+Opening the upstream PR requires working GitHub write/API access.
