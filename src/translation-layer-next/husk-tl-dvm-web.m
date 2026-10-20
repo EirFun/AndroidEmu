@@ -516,13 +516,17 @@ NAT(W_eval)
         HuskWeb *h = view_of(wid);
         if (!h) return;
         if (!cb) { [h.web evaluateJavaScript:js completionHandler:nil]; return; }
-        /* Android hands the callback the result as JSON */
-        NSData *q = [NSJSONSerialization dataWithJSONObject:@[ js ] options:0 error:nil];
-        NSString *quoted = [[NSString alloc] initWithData:q encoding:NSUTF8StringEncoding];
-        NSString *wrapped = [NSString stringWithFormat:@"(function(){var r=(0,eval)(%@[0]);try{var s=JSON.stringify(r);return s===undefined?'null':s}catch(e){return 'null'}})()", quoted];
-        [h.web evaluateJavaScript:wrapped completionHandler:^(id result, NSError *err) {
+        /* Execute through WebKit's native API, as in the no-callback path.
+           A page-world eval wrapper is blocked by a strict script-src CSP.
+           Android hands the callback JSON, including quotes for string values. */
+        [h.web evaluateJavaScript:js completionHandler:^(id result, NSError *err) {
             if (err) tl_log_line("web: evaluateJavascript: %s", err.localizedDescription.UTF8String);
-            emit(@"v", wid, @[ [NSString stringWithFormat:@"%d", cb], [result isKindOfClass:NSString.class] ? result : @"null" ]);
+            NSString *json = @"null";
+            if (!err && result && [NSJSONSerialization isValidJSONObject:@[ result ]]) {
+                NSData *data = [NSJSONSerialization dataWithJSONObject:result options:NSJSONWritingFragmentsAllowed error:nil];
+                if (data) json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] ?: @"null";
+            }
+            emit(@"v", wid, @[ [NSString stringWithFormat:@"%d", cb], json ]);
         }];
     });
     return true;
