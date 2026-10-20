@@ -103,8 +103,9 @@ public final class AppRunner {
         sApp = app;
         android.app.ActivityThread.huskBind(app);
         Application.huskSet(app);
-        ContextImpl.setApplication(app);
         app.huskAttach(base);
+        // attachBaseContext may wrap the base; do not let that wrapper delegate back to this Application.
+        ContextImpl.setApplication(app);
         installProviders(app);
         Looper.setInputSink(AppRunner::deliver);
         applyInsets();
