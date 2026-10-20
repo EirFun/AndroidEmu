@@ -40,7 +40,7 @@ def methods(data):
             normalized, position = [], 0
             for instruction in code:
                 name = instruction.get_name()
-                operands = instruction.get_operands()
+                operands = instruction.get_operands() or []
                 if name == 'nop':
                     position += instruction.get_length()
                     continue

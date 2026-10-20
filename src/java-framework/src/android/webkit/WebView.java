@@ -602,6 +602,7 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
         WebResourceResponse r;
         synchronized (this) { r = main ? mPrimed.remove(hostUrl) : null; }
         if (r == null) r = intercept(url, method, main, headers);
+        if (r == null) r = husk.AnkiMediaFiles.open(getContext(), url, method);
         try {
             if (r != null) {
                 Map<String, String> rh = r.getResponseHeaders();
