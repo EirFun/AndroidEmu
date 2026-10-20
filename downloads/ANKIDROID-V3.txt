@@ -1,0 +1,41 @@
+Husk AnkiDroid test v3: existing-collection path relocation
+
+Install Husk-3.0.0-129-AnkiDroid-test-v3.ipa through SideStore as an update.
+Do NOT uninstall Husk or remove AnkiDroid's data to resolve this storage error.
+Keep a backup of valuable data. Re-enable JIT and fully relaunch Husk.
+Expected build label: dbc202a+ankidroid-test-v3.
+IPA size: 140,079,130 bytes (about 140 MB).
+
+The new report showed a confirmed mismatch: AnkiDroid's saved collection path
+used a previous iOS data-container identifier, while Husk's current files used
+a different identifier. The same TranslationLayer library entry was retained.
+This can occur across a sideloaded-app update; uninstalling is not required.
+
+V3 retains the V2 dialog callback fix and temporary single-pane override. It
+additionally resolves the saved deckPath at read time against Native.dataDir():
+- The Documents/TranslationLayer/<library-entry>/java-data suffix must match.
+- The current candidate must already contain a collection.anki2 file.
+- An accessible original collection is preserved.
+- Missing targets, traversal paths, and symlinks outside the data root are refused.
+- Other apps, unrelated preferences, and caller defaults are unchanged.
+- No saved preference or collection data is overwritten. No folders or replacement
+  databases are created by the relocation helper.
+- The current container is obtained dynamically on each read, including after a
+  later update. No device-specific container identifier is hard-coded.
+
+Host Java compilation and regression tests passed. The rebuilt DEX changes only
+the preference string getter and adds the compiled relocation helper relative to
+V2; existing methods and retained IPA entries were compared. ZIP integrity passed.
+Native executable bytes are unchanged. Re-signing is required.
+
+Device testing is still needed. First verify that the deck list opens and the
+report's collection path uses the current container. Then test sign-in and adding
+a plain Basic note separately. No AnkiDroid APK replacement is required.
+
+If the directory error remains, send the new report. V3 intentionally leaves the
+error intact if it cannot locate the existing collection; that is preferable to
+silently opening an empty collection. Do not select Create new collection as a
+storage repair step while preserving an existing collection.
+
+The separate ACRA service-discovery error is unchanged. This build does not claim
+to fix native TLS/networking, authentication, or the underlying WebView issue.

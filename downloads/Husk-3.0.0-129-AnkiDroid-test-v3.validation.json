@@ -1,0 +1,38 @@
+{
+  "v2_ipa_sha256": "7c5e1f1f7d976edc22b833b52e532c7316c9d69ac966c3e448c4ff3339684918",
+  "patched_ipa_sha256": "b0c08130574109f1a173a95d4cbb850a96e8e71f33f92f32a5b06b546e1ac716",
+  "size_bytes": 140079130,
+  "added_framework_methods": [
+    [
+      "Lhusk/AnkiStoragePath;",
+      "<init>",
+      "()V"
+    ],
+    [
+      "Lhusk/AnkiStoragePath;",
+      "forPreference",
+      "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"
+    ],
+    [
+      "Lhusk/AnkiStoragePath;",
+      "relocate",
+      "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"
+    ]
+  ],
+  "changed_existing_methods": [
+    [
+      "Landroid/content/HuskSharedPreferences;",
+      "getString",
+      "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"
+    ]
+  ],
+  "helper_dex_sha256": "f7d1ef82209a9034bbbc6b5bd3c5e3018c41483f2bde8f43e27cc969d85bb799",
+  "validation": "Relative to v2: only preference string getter changed plus the compiled relocation helper; other methods compared; retained IPA entries compared; ZIP integrity passed",
+  "requires_resigning": true,
+  "device_tested": false,
+  "storage_fix_device_verified": false,
+  "login_verified": false,
+  "editor_fix_verified": false,
+  "saved_preferences_modified": false,
+  "collection_files_modified": false
+}
