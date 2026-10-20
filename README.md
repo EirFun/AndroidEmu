@@ -1,12 +1,13 @@
 # Husk
 
-This source copy includes an experimental **AnkiDroid test v9** for Husk 3.0.0 build 129.
+This source copy includes an experimental **AnkiDroid test v10** for Husk 3.0.0 build 129.
 
-- [Download test v9 IPA](https://github.com/EirFun/AndroidEmu/blob/husk-attachfix/downloads/Husk-3.0.0-129-AnkiDroid-test-v9.ipa) — click **Download raw file**, then re-sign with your sideloader.
-- [V9 installation and test instructions](downloads/ANKIDROID-V9.txt).
-- [V9 validation results](downloads/Husk-3.0.0-129-AnkiDroid-test-v9.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
+- [Download test v10 IPA](https://github.com/EirFun/AndroidEmu/blob/husk-attachfix/downloads/Husk-3.0.0-129-AnkiDroid-test-v10.ipa) — click **Download raw file**, then re-sign with your sideloader.
+- [V10 installation, media and performance notes](downloads/ANKIDROID-V10.txt).
+- [V10 validation results](downloads/Husk-3.0.0-129-AnkiDroid-test-v10.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
+- [Confirmed SO_DOMAIN bug and source fix](downloads/SO-DOMAIN-ISSUE.md).
 
-The v8 report shows stable memory, initialized reviewer scripts and question/answer HTML. The user reports normal cards work, while Image Occlusion stays blank and Back stalls. V9 configures a bounded listener accept and wakes its existing accept to help server shutdown finish; it also logs image/canvas dimensions and activity finish stages. Unhandled local GETs receive the same 404 that AnkiServer would return. **Back and Image Occlusion behavior still need iPad testing; the native socket bug is not fixed.** Host loopback lifecycle, navigation and archive/DEX checks pass. All earlier fixes are retained. This patches Java resources in the official IPA and is not a full native iOS rebuild. Install as an update with existing data backed up.
+V9 fixed Back on the user's iPad. Its report identifies image GETs returning 404 with zero natural image dimensions, and an exact socket failure: Linux SO_DOMAIN is unsupported. V10 patches one bundled libcore method to identify socket family through getsockname and adds a read-only fallback for images already present in the collection media directory. **V10 still needs iPad testing and does not supply missing media.** The native SO_DOMAIN source fix is committed, but native executables in the IPA are unchanged. Host socket/file/actual-card rendering tests and archive/DEX checks pass; original core hidden-API metadata and access flags are preserved. All earlier fixes remain. Husk's Java DEX interpreter limits performance even where native games run well. Install as an update with existing data backed up. This repository contains no private test deck or media.
 
 Upstream: [Leviidev/Husk](https://github.com/Leviidev/Husk), source base `2df074b3083ce2913922995f2f99249f1498b554`, with fix commit `7a0e0f3d2466dc2d3e77a6a2ad72676be0aff5a4`. Upstream history and license are retained. This repository is a source copy, not a GitHub-created fork.
 

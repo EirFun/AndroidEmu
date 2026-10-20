@@ -1,0 +1,47 @@
+{
+  "v9_ipa_sha256": "49b7f961dde231268f7742fa12c9d8b42ebca98d58fda87049bfdb5c0673f32e",
+  "patched_ipa_sha256": "7094b15840af145dc10e47572597fea3b7a8912d28b2b7c2e57774e8db9987bb",
+  "size_bytes": 140089817,
+  "changed_existing_framework_methods": [
+    [
+      "Landroid/webkit/WebView;",
+      "serve",
+      "(I Ljava/lang/String; Ljava/lang/String; Z Ljava/util/Map;)V"
+    ]
+  ],
+  "added_framework_methods": [
+    [
+      "Lhusk/AnkiMediaFiles;",
+      "<init>",
+      "()V"
+    ],
+    [
+      "Lhusk/AnkiMediaFiles;",
+      "open",
+      "(Landroid/content/Context; Ljava/lang/String; Ljava/lang/String;)Landroid/webkit/WebResourceResponse;"
+    ],
+    [
+      "Lhusk/AnkiMediaFiles;",
+      "resolveFile",
+      "(Ljava/io/File; Ljava/lang/String;)Ljava/io/File;"
+    ]
+  ],
+  "changed_core_methods": [
+    [
+      "Llibcore/io/BlockGuardOs;",
+      "isUnixSocket",
+      "(Ljava/io/FileDescriptor;)Z"
+    ]
+  ],
+  "original_hidden_api_metadata_sha256": "afd21ffee9f1bc51db6be1a2b2a0891ffdb78151d2e66188ab1cb92a9e3af8cc",
+  "hidden_api_metadata_preserved": true,
+  "core_class_member_order_and_flags_preserved": true,
+  "device_tested": false,
+  "native_executables_changed": false,
+  "native_SO_DOMAIN_source_fix_in_ipa": false,
+  "libcore_family_compatibility_device_verified": false,
+  "image_loading_device_verified": false,
+  "media_files_copied_or_modified": false,
+  "requires_resigning": true,
+  "validation": "One framework method plus image helper; one core method; original hidden-API metadata/order/flags retained; other methods/JAR/IPA entries compared; ZIP checks passed"
+}

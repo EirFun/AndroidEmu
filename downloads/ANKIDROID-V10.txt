@@ -1,0 +1,70 @@
+Husk AnkiDroid test v10: socket family compatibility and existing-image fallback
+
+Download Husk-3.0.0-129-AnkiDroid-test-v10.ipa with Download raw file.
+Size: 140,089,817 bytes (about 140 MB). Install as an update through SideStore,
+re-enable JIT and restart Husk. Keep the existing APK and collection.
+Expected label: dbc202a+ankidroid-test-v10.
+
+The v9 report confirms activity stop/destroy complete and Back now works on the
+user's iPad. It also shows the Image Occlusion failure is an image load failure:
+local GETs return 404, images are complete but natural dimensions are 0x0, and
+canvases consequently have zero height. A supplied export from Windows contains
+valid JPEGs and simple HTML/CSS occlusion masks. The actual exported card renders
+with its image and mask in the desktop browser. The export was not already
+imported on the iPad, so its media's presence there is not established. The
+private export, notes and images are not included in this public repository.
+
+Socket cause now known:
+  getsockopt failed: ENOPROTOOPT (Protocol not available)
+  libcore.io.BlockGuardOs.isUnixSocket -> BlockGuardOs.accept -> ServerSocket.accept
+Android asks for Linux SOL_SOCKET/SO_DOMAIN (39) before accepting a connection.
+Husk lacks that option, so the check fails before consuming the pending
+connection. NanoHTTPD retries a still-ready listening socket. This explains the
+observed exception path and provides a concrete mechanism for the earlier rapid
+retry/allocation growth; it does not establish that every prior crash is fixed.
+
+V10 runtime socket fix: bundled core-libart.jar's BlockGuardOs.isUnixSocket uses
+Libcore.rawOs.getsockname(fd) instanceof android.system.UnixSocketAddress instead
+of querying SO_DOMAIN. It retains Unix/Internet distinction, using the same
+native getsockname already used to obtain the local listening port. Only that
+core method's code changes. The original hidden-API metadata is restored byte
+for byte after assembly; class/member ordering and access flags are verified.
+The corresponding source-only C fix in husk-tl-bionic-net.c implements SO_DOMAIN
+via getsockname with Darwin-to-Linux family conversion. Host tests exercise the
+production C branch with IPv4, IPv6, Unix and invalid inputs. That native C fix
+is NOT present in the IPA's unchanged executable; the core bytecode patch is the
+shipped alternative. Both still need iPad validation.
+
+V10 image fallback: if AnkiDroid's resource handler does not return a local image,
+try the existing file in deckPath/collection.media. Only supported image
+extensions and flat names inside the canonical media directory are allowed;
+traversal and escaping symlinks are rejected. It reads existing media only.
+Logs show whether the directory exists/is readable and the requested image file
+is present, without logging filenames or collection paths. No images are added,
+downloaded or modified by this fallback. Missing files still return 404.
+
+Test:
+1. Open a previously failing image card, wait 7 seconds, then test Back.
+2. Transfer your exported .apkg to the iPad and use AnkiDroid's Import option.
+   The export must include media. Open the imported test deck. If this works
+   while the synced deck still has broken images, investigate media sync.
+3. Send the fresh v10 report. Look for HuskAnkiMedia lookup lines, image response
+   byte counts, natural image dimensions, and whether SO_DOMAIN errors disappear.
+
+Performance: current Husk DEX execution is interpreted (see husk-tl-dvm.h).
+A largely native ARM game can run smoothly while AnkiDroid's Java/Android UI is
+slow. JIT availability for native translation does not turn DEX into compiled
+Java. Fixing failed socket retries reduces avoidable CPU/allocation work; no FPS
+or broad smoothness gain is verified. AnkiDroid Settings > Accessibility > Remove
+animations is a supported way to reduce transition work. Low resolution alone
+cannot address interpreter or blocked-I/O costs. Native interpreter/layout work
+and profiling require a native rebuild for broader improvements.
+
+Validation: Java compilation, real-file lookup/containment tests, native socket
+family branch tests, and the actual exported card's host rendering passed.
+DEX comparisons find only WebView.serve plus its three-method image helper and
+one existing core method changed. Core metadata/class/member flags are retained;
+all other existing methods, JAR entries, native binaries and retained IPA entries
+match v9 except the build label. ZIP integrity passes. The v9 semantic comparator
+also accepts operand-less core payloads for this verification. On-device image,
+socket and performance behavior of v10 is unverified; all earlier fixes remain.
