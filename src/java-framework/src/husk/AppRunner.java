@@ -279,7 +279,9 @@ public final class AppRunner {
             }
         }
         a.huskStop();
+        AnkiServerLifecycle.stopped(a);
         a.huskDestroy();
+        AnkiServerLifecycle.destroyed(a);
         // the app ends with its last activity, unless one it started just before (finish(); startActivity(...)) is still to come
         if (sStack.isEmpty()) sHandler.post(() -> { if (sStack.isEmpty()) Native.exit(); });
     }

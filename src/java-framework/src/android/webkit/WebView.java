@@ -226,6 +226,7 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
         // WebKit captures page preferences at navigation start; do not wait for the posted settings update.
         pushSettings();
         Log.d(TAG, "loadDataWithBaseURL " + baseUrl + " JavaScript=" + mSettings.getJavaScriptEnabled());
+        husk.AnkiServerLifecycle.configure(mClient);
         byte[] bytes = husk.AnkiReviewerAssets.prepare(data, mimeType).getBytes(java.nio.charset.StandardCharsets.UTF_8);
         String base = baseUrl == null || baseUrl.startsWith("data:") ? null : baseUrl;
         if ("com.ichi2.anki".equals(husk.Native.packageName()) && base != null
@@ -608,6 +609,8 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
                 if (rh != null) { h = new String[rh.size() * 2]; int i = 0; for (Map.Entry<String, String> e : rh.entrySet()) { h[i++] = e.getKey(); h[i++] = e.getValue(); } }
                 byte[] body = readAll(r.getData());
                 int status = r.getData() == null && r.getStatusCode() == 200 ? 404 : r.getStatusCode();
+                if ("com.ichi2.anki".equals(husk.Native.packageName()) && r.getMimeType() != null && r.getMimeType().startsWith("image/"))
+                    Log.d(TAG, "reviewer image response status=" + status + " mime=" + r.getMimeType() + " bytes=" + body.length);
                 husk.Web.respond(call, status, r.getReasonPhrase(), r.getMimeType(), r.getEncoding(), h, body);
                 return;
             }
@@ -624,6 +627,14 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
                 File f = new File(path == null ? "" : path);
                 if (!f.isFile()) { husk.Web.respond(call, 404, "Not Found", "text/plain", null, null, new byte[0]); return; }
                 husk.Web.respond(call, 200, "OK", mimeOf(f.getName()), null, null, readAll(new FileInputStream(f)));
+                return;
+            }
+            Uri fallback = Uri.parse(url);
+            if ("com.ichi2.anki".equals(husk.Native.packageName()) && "GET".equals(method)
+                    && "127.0.0.1".equals(fallback.getHost())) {
+                // AnkiServer also rejects GETs with 404; do not hand a missing media GET to its broken socket path.
+                Log.w(TAG, "reviewer local GET not served by resource handler; returning 404");
+                husk.Web.respond(call, 404, "Not Found", "text/plain", null, null, new byte[0]);
                 return;
             }
             husk.Web.respond(call, 0, url, null, null, null, null);       // the network's: the host fetches it

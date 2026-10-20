@@ -33,7 +33,7 @@ public final class AnkiReviewerAssets {
     public static String withDiagnostics(String script) {
         if (!"com.ichi2.anki".equals(Native.packageName())
                 || !(script.startsWith("_showQuestion(") || script.startsWith("_showAnswer("))) return script;
-        String probe = "var q=document.getElementById('qa'); console.log('Husk card DOM: '+JSON.stringify({qa:!!q,textLength:q?q.textContent.length:0,htmlLength:q?q.innerHTML.length:0,opacity:q?getComputedStyle(q).opacity:null,mathjax:typeof MathJax,origin:location.protocol}));";
+        String probe = "var q=document.getElementById('qa'); console.log('Husk card DOM: '+JSON.stringify({qa:!!q,textLength:q?q.textContent.length:0,htmlLength:q?q.innerHTML.length:0,opacity:q?getComputedStyle(q).opacity:null,mathjax:typeof MathJax,origin:location.protocol,images:Array.from(document.images).slice(0,8).map(function(i){return {complete:i.complete,nw:i.naturalWidth,nh:i.naturalHeight,w:i.clientWidth,h:i.clientHeight,scheme:i.src.split(':')[0]}}),canvases:Array.from(document.querySelectorAll('canvas')).slice(0,4).map(function(c){return {w:c.width,h:c.height,cw:c.clientWidth,ch:c.clientHeight}})}));";
         return script + "\nsetTimeout(function(){" + probe + "},1500);setTimeout(function(){" + probe + "},6000);";
     }
 
