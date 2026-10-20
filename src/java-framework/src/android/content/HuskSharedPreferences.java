@@ -62,7 +62,13 @@ public final class HuskSharedPreferences implements SharedPreferences {
     public synchronized int getInt(String k, int d) { Object v = map.get(k); return v instanceof Integer ? (Integer) v : d; }
     public synchronized long getLong(String k, long d) { Object v = map.get(k); return v instanceof Long ? (Long) v : v instanceof Integer ? (Integer) v : d; }
     public synchronized float getFloat(String k, float d) { Object v = map.get(k); return v instanceof Float ? (Float) v : d; }
-    public synchronized boolean getBoolean(String k, boolean d) { Object v = map.get(k); return v instanceof Boolean ? (Boolean) v : d; }
+    public synchronized boolean getBoolean(String k, boolean d) {
+        // Temporary diagnostic workaround for AnkiDroid's split-preview freeze.
+        // Override reads only: retain the user's stored preference for future builds.
+        if ("noteEditorShowPreviewer".equals(k) && "com.ichi2.anki".equals(husk.Native.packageName())) return false;
+        Object v = map.get(k);
+        return v instanceof Boolean ? (Boolean) v : d;
+    }
     public synchronized boolean contains(String k) { return map.containsKey(k); }
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener l) { if (l != null && !listeners.contains(l)) listeners.add(l); }
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener l) { listeners.remove(l); }
