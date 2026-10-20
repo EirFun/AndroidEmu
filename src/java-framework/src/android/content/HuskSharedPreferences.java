@@ -57,7 +57,10 @@ public final class HuskSharedPreferences implements SharedPreferences {
         } catch (IOException e) { return false; }
     }
     public synchronized Map<String, ?> getAll() { return new HashMap<>(map); }
-    public synchronized String getString(String k, String d) { Object v = map.get(k); return v instanceof String ? (String) v : d; }
+    public synchronized String getString(String k, String d) {
+        Object v = map.get(k);
+        return v instanceof String ? husk.AnkiStoragePath.forPreference(k, (String) v) : d;
+    }
     @SuppressWarnings("unchecked") public synchronized Set<String> getStringSet(String k, Set<String> d) { Object v = map.get(k); return v instanceof Set ? (Set<String>) v : d; }
     public synchronized int getInt(String k, int d) { Object v = map.get(k); return v instanceof Integer ? (Integer) v : d; }
     public synchronized long getLong(String k, long d) { Object v = map.get(k); return v instanceof Long ? (Long) v : v instanceof Integer ? (Integer) v : d; }
