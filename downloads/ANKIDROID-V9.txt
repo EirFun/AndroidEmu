@@ -1,0 +1,65 @@
+Husk AnkiDroid test v9: bounded listener shutdown and Image Occlusion diagnostics
+
+Download Husk-3.0.0-129-AnkiDroid-test-v9.ipa with Download raw file.
+Size: 140,084,721 bytes (about 140 MB). Install as an update through SideStore,
+re-enable JIT and restart Husk. Keep the existing APK and collection.
+Expected build label: dbc202a+ankidroid-test-v9.
+
+The latest v8 report establishes:
+- The reviewer initializes and question/answer HTML reaches #qa with opacity 1.
+- Memory remains near 3.8 GB available during this run; no native crash or
+  NanoHTTPD accept-failure message is recorded. The retry guard installs, but
+  that does not prove it caused this run's stable memory.
+- Back resumes DeckPicker internally, hides the native WebView and calls its
+  destroy method. A stale native WebView is not demonstrated as the cause.
+- The report stops after reviewer view destruction. It does not establish that
+  the remaining activity/ViewModel cleanup completed. The user reports normal
+  cards work, Image Occlusion cards stay blank, and Back leaves the screen stuck.
+
+V9's Back workaround is scoped to AnkiDroid. At HTML load it inspects the private
+WebViewClient -> fragment/lazy/viewmodel ownership graph, bounded to six levels
+and 512 objects, looking only for NanoHTTPD's ServerSocket. It recognizes the
+original NanoHTTPD class name and the verified R8 name 'bv' in this exact APK.
+It skips static fields and does not change card data, collection or preferences.
+If found, it sets a 500 ms accept timeout once per socket and starts one background
+loopback connection to release any accept that began with an infinite timeout.
+The wakeup carries no HTTP body. Normal socket/client cleanup and thread joining
+remain in place. This is intended to let NanoHTTPD.stop() complete despite the
+failed AsynchronousCloseMonitor signal handler. The causal diagnosis and the
+workaround's effectiveness on iPad are not yet confirmed. V8's failed-accept
+handler can additionally delay an expected timeout by 250 ms.
+
+New logs show whether the listener was found/configured and awakened, and whether
+activity stop and destroy returned. If reflection or wakeup fails, the workaround
+logs that failure and leaves normal lifecycle behavior in place. The actual
+private-field layout and native socket behavior still require device testing.
+
+For Image Occlusion:
+- Log up to eight images' complete/natural/client dimensions and URL schemes,
+  plus up to four canvas dimensions, after question/answer rendering. Filenames,
+  image bytes, card text and credentials are not logged.
+- Log image-response status, MIME and byte count from Android's resource handler.
+- If a local GET is unhandled, return 404 directly. AnkiServer already rejects
+  GET with 404; this avoids forwarding a missing media GET to its socket path
+  and lets the browser finish the image request instead of waiting indefinitely.
+These changes diagnose missing/broken images and canvas sizing. They do not claim
+to repair Image Occlusion or download missing media. A small affected .apkg with
+media is still useful for reproducing the actual card template.
+
+Host validation: changed sources compile. A real loopback server fixture tests
+private graph traversal with cycles, timeout configuration, awakening an existing
+accept, idempotence, shutdown completion and other-app isolation. It is a fixture,
+not the actual Android NanoHTTPD runtime. Navigation-order and origin tests pass.
+The actual APK reviewer previously rendered an Image Occlusion fixture with a
+loaded image and canvas mask in Chromium; that is not an iPad WebKit result.
+
+DEX validation finds four intended existing method changes plus nine helper
+methods. Comparisons normalize jumbo strings, branch destinations, switch case
+targets and alignment NOPs while retaining logical control flow. Other existing
+methods, lambda classes, native executables and retained IPA entries match v8,
+except the build label. ZIP integrity passes. All prior fixes are retained.
+
+Test an affected occlusion card, wait about 7 seconds for image diagnostics, then
+press Back. Share the fresh full v9 report, including any listener/wakeup errors.
+The underlying native socket bug, Pencil identification and Image Occlusion
+compatibility remain unresolved. This is a Java DEX patch, not a native rebuild.

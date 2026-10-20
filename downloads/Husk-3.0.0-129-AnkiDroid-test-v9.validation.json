@@ -1,0 +1,84 @@
+{
+  "v8_ipa_sha256": "e230de88d808b265cf82760d6ff9f2ce8d932a8d06376e32acde0edb40c8e98d",
+  "patched_ipa_sha256": "49b7f961dde231268f7742fa12c9d8b42ebca98d58fda87049bfdb5c0673f32e",
+  "size_bytes": 140084721,
+  "added_framework_methods": [
+    [
+      "Lhusk/AnkiServerLifecycle;",
+      "<clinit>",
+      "()V"
+    ],
+    [
+      "Lhusk/AnkiServerLifecycle;",
+      "<init>",
+      "()V"
+    ],
+    [
+      "Lhusk/AnkiServerLifecycle;",
+      "configure",
+      "(Ljava/lang/Object;)V"
+    ],
+    [
+      "Lhusk/AnkiServerLifecycle;",
+      "destroyed",
+      "(Landroid/app/Activity;)V"
+    ],
+    [
+      "Lhusk/AnkiServerLifecycle;",
+      "enqueue",
+      "(Ljava/lang/Object; I Ljava/util/ArrayDeque; Ljava/util/ArrayDeque; Ljava/util/IdentityHashMap;)V"
+    ],
+    [
+      "Lhusk/AnkiServerLifecycle;",
+      "findListener",
+      "(Ljava/lang/Object;)Ljava/net/ServerSocket;"
+    ],
+    [
+      "Lhusk/AnkiServerLifecycle;",
+      "stopped",
+      "(Landroid/app/Activity;)V"
+    ],
+    [
+      "Lhusk/AnkiServerWakeup;",
+      "<init>",
+      "(Ljava/net/ServerSocket;)V"
+    ],
+    [
+      "Lhusk/AnkiServerWakeup;",
+      "run",
+      "()V"
+    ]
+  ],
+  "changed_existing_methods": [
+    [
+      "Landroid/webkit/WebView;",
+      "serve",
+      "(I Ljava/lang/String; Ljava/lang/String; Z Ljava/util/Map;)V"
+    ],
+    [
+      "Landroid/webkit/WebView;",
+      "loadDataWithBaseURL",
+      "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String;)V"
+    ],
+    [
+      "Lhusk/AnkiReviewerAssets;",
+      "withDiagnostics",
+      "(Ljava/lang/String;)Ljava/lang/String;"
+    ],
+    [
+      "Lhusk/AppRunner;",
+      "finishNow",
+      "(Landroid/app/Activity; Z)V"
+    ]
+  ],
+  "compiled_dex_sha256": "20aa0e055b8e6c26b99a4548ab01a986d1244cfa911693dfbc717979faa5e8df",
+  "validation": "Only four intended existing methods and nine helper methods differ from v8; all other existing methods and retained IPA entries compared; ZIP integrity passed",
+  "requires_resigning": true,
+  "device_tested": false,
+  "image_occlusion_fix_device_verified": false,
+  "listener_timeout_device_verified": false,
+  "native_socket_crash_fixed": false,
+  "pencil_tool_type_fixed": false,
+  "whiteboard_input_device_verified": false,
+  "back_freeze_fixed": false
+}

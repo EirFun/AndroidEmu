@@ -1,12 +1,12 @@
 # Husk
 
-This source copy includes an experimental **AnkiDroid test v8** for Husk 3.0.0 build 129.
+This source copy includes an experimental **AnkiDroid test v9** for Husk 3.0.0 build 129.
 
-- [Download test v8 IPA](https://github.com/EirFun/AndroidEmu/blob/husk-attachfix/downloads/Husk-3.0.0-129-AnkiDroid-test-v8.ipa) — click **Download raw file**, then re-sign with your sideloader.
-- [V8 installation and test instructions](downloads/ANKIDROID-V8.txt).
-- [V8 validation results](downloads/Husk-3.0.0-129-AnkiDroid-test-v8.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
+- [Download test v9 IPA](https://github.com/EirFun/AndroidEmu/blob/husk-attachfix/downloads/Husk-3.0.0-129-AnkiDroid-test-v9.ipa) — click **Download raw file**, then re-sign with your sideloader.
+- [V9 installation and test instructions](downloads/ANKIDROID-V9.txt).
+- [V9 validation results](downloads/Husk-3.0.0-129-AnkiDroid-test-v9.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
 
-The v7 report confirms reviewer JavaScript initializes and the user can draw, but the card stays blank and memory drains before a native crash on NanoHttpd Main Listener. V8 adds a 250 ms delay on failed NanoHTTPD accepts with rate-limited error logs, routes reviewer localhost resources through Android's existing handler, and logs card DOM sizes/state without card text. The retry guard mitigates a suspected error loop; **the native socket bug is not fixed, and v8 needs iPad testing**. Host checks and Chromium tests with the actual APK pass for plain and MathJax cards. All earlier fixes are retained. Back-button freezing and Pencil identification remain unresolved. This is a Java resource patch to the official IPA, not a full native iOS rebuild. Install as an update with existing data backed up.
+The v8 report shows stable memory, initialized reviewer scripts and question/answer HTML. The user reports normal cards work, while Image Occlusion stays blank and Back stalls. V9 configures a bounded listener accept and wakes its existing accept to help server shutdown finish; it also logs image/canvas dimensions and activity finish stages. Unhandled local GETs receive the same 404 that AnkiServer would return. **Back and Image Occlusion behavior still need iPad testing; the native socket bug is not fixed.** Host loopback lifecycle, navigation and archive/DEX checks pass. All earlier fixes are retained. This patches Java resources in the official IPA and is not a full native iOS rebuild. Install as an update with existing data backed up.
 
 Upstream: [Leviidev/Husk](https://github.com/Leviidev/Husk), source base `2df074b3083ce2913922995f2f99249f1498b554`, with fix commit `7a0e0f3d2466dc2d3e77a6a2ad72676be0aff5a4`. Upstream history and license are retained. This repository is a source copy, not a GitHub-created fork.
 
