@@ -1,0 +1,39 @@
+Husk AnkiDroid test v4: avoid ACRA startup failure
+
+Download Husk-3.0.0-129-AnkiDroid-test-v4.ipa using GitHub's Download raw file
+button. Its size is 140,079,266 bytes (about 140 MB). Install through SideStore
+as an update, re-enable JIT, fully close Husk, then reopen. Do not uninstall Husk
+or reset AnkiDroid's collection to apply this change. Keep existing data backed up.
+Expected build label: dbc202a+ankidroid-test-v4.
+
+The latest report differs from the earlier native socket/memory crash:
+- Its previous-run excerpt shows question/answer/grading activity with available
+  memory staying around 3.6 GB.
+- Its current run throws ServiceConfigurationError during ACRA StartupProcessor
+  service discovery, opens the crash-report dialog, and exits via Runtime.exit(10).
+- No native fatal signal appears in that run. This does not establish that the
+  earlier native crash has been fixed.
+
+V4 retains all V3 changes. It additionally returns "1" for reportErrorMode only
+when AnkiDroid requests that preference. In AnkiDroid 2.26.0alpha6, "1" is the
+supported never-report mode and avoids the ACRA configuration/initialization path.
+The saved reportErrorMode choice is not replaced. AnkiDroid's own supported
+never-report path can write ACRA's separate disable flag. Other apps and other
+preferences are unchanged. Timber/Husk logs remain enabled; ACRA reporting is
+disabled while using this test build.
+
+Host checks passed for missing/saved report modes, saved-value preservation,
+other apps, message copying, preview isolation, and collection relocation.
+DEX comparison against V3 found only the intended string-getter change; native
+executables and all other retained IPA entries match V3 except the build label.
+ZIP integrity passed. Installation/startup on iPad is not verified.
+
+Test startup first: the ACRA service error and report-preparation dialog should
+no longer appear if this workaround is effective. Crash Reports Enabled should
+be false if AnkiDroid prints that status. Let media sync finish, then test one
+plain card. If it closes again, send that run's complete Husk report.
+
+For lag, Husk's per-app Display > Resolution can be set to Low, followed by a
+full restart. Lower resolution may reduce drawing work, but it is not a native
+memory or socket bug fix. The missing onPageFinished JavaScript function seen
+in the previous-run excerpt remains undiagnosed and unchanged.

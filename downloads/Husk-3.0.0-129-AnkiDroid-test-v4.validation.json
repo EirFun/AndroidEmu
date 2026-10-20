@@ -1,0 +1,18 @@
+{
+  "v3_ipa_sha256": "b0c08130574109f1a173a95d4cbb850a96e8e71f33f92f32a5b06b546e1ac716",
+  "patched_ipa_sha256": "4db13ae8584fe2051440e8af2901c225bb8902f8a5330fd30160d602f50292ad",
+  "size_bytes": 140079266,
+  "changed_existing_methods": [
+    [
+      "Landroid/content/HuskSharedPreferences;",
+      "getString",
+      "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"
+    ]
+  ],
+  "validation": "Only string preference getter semantically changed relative to v3; other methods and IPA entries compared; ZIP integrity passed",
+  "requires_resigning": true,
+  "device_tested": false,
+  "acra_workaround_device_verified": false,
+  "native_socket_crash_fixed": false,
+  "override": "reportErrorMode reads 1 for com.ichi2.anki, including missing keys; saved reporting choice is not replaced"
+}

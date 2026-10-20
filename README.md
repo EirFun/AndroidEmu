@@ -1,12 +1,12 @@
 # Husk
 
-This source copy includes an experimental **AnkiDroid test v3** for Husk 3.0.0 build 129.
+This source copy includes an experimental **AnkiDroid test v4** for Husk 3.0.0 build 129.
 
-- [Download test v3 IPA](https://github.com/EirFun/AndroidEmu/blob/husk-attachfix/downloads/Husk-3.0.0-129-AnkiDroid-test-v3.ipa) — click **Download raw file**, then re-sign with your sideloader.
-- [V3 installation and test instructions](downloads/ANKIDROID-V3.txt).
-- [V3 validation results](downloads/Husk-3.0.0-129-AnkiDroid-test-v3.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
+- [Download test v4 IPA](https://github.com/EirFun/AndroidEmu/blob/husk-attachfix/downloads/Husk-3.0.0-129-AnkiDroid-test-v4.ipa) — click **Download raw file**, then re-sign with your sideloader.
+- [V4 installation and test instructions](downloads/ANKIDROID-V4.txt).
+- [V4 validation results](downloads/Husk-3.0.0-129-AnkiDroid-test-v4.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
 
-V3 retains the startup fix, dialog message-copy fix, and temporary single-pane override. It also resolves an obsolete saved AnkiDroid collection path against the current iOS data container, but only when it finds the existing collection under the same Husk library entry. It does not modify the saved preference or create a replacement collection. Host tests cover repeated container changes, missing collections, unrelated apps, and path containment. **Storage recovery, AnkiWeb authentication, and card saving still require iPad testing.** This is not a full native iOS rebuild. Back up existing data before installing. These changes apply to Husk's Java compatibility runtime, not Android running inside a full VM.
+V4 retains the startup fix, dialog message-copy fix, temporary single-pane override, and guarded collection-path relocation. It additionally reads AnkiDroid's crash-reporting mode as its supported "never report" value to avoid the ACRA service-discovery failure and subsequent app exit seen in the latest report. Login and some review activity were observed on v3, but **v4 still needs device testing and does not fix the earlier native socket/memory crash.** Host preference and relocation tests and archive/DEX comparisons passed. This is not a full native iOS rebuild. Back up existing data before installing. These changes apply to Husk's Java compatibility runtime, not Android running inside a full VM.
 
 Upstream: [Leviidev/Husk](https://github.com/Leviidev/Husk), source base `2df074b3083ce2913922995f2f99249f1498b554`, with fix commit `7a0e0f3d2466dc2d3e77a6a2ad72676be0aff5a4`. Upstream history and license are retained. This repository is a source copy, not a GitHub-created fork.
 
