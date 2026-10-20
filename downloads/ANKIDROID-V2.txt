@@ -1,0 +1,47 @@
+Husk AnkiDroid test v2: 3.0.0 build 129
+
+Download Husk-3.0.0-129-AnkiDroid-test-v2.ipa and import it into SideStore.
+Use the GitHub file page's Download raw file button, not Download ZIP for the
+repository. The IPA is 140,078,836 bytes (about 140 MB).
+Back up valuable data and update the existing app with your usual signing
+identity. Re-enable JIT after installation, fully close Husk, then relaunch.
+The report should identify dbc202a+ankidroid-test-v2 if it includes the build banner.
+
+What changed:
+1. Retained the Application attach-order startup fix from test v1.
+2. Implemented Message.obtain(Message), formerly a null-returning stub.
+   AppCompat copies its dialog-button callback with this API, skips a null
+   callback, and still dismisses the dialog. The user's report showed the
+   sign-in prompt closing without AccountActivity being launched.
+   This is a framework bug fix, not a change to Rust/TLS/authentication.
+3. Temporarily return false for noteEditorShowPreviewer only while running
+   com.ichi2.anki. This bypasses existing saved true values. It does not edit
+   the saved preference. Other apps and preference keys retain normal behavior.
+   This is a diagnostic workaround for the split-preview editor freeze.
+
+Use your existing AnkiDroid APK: no APK rebuild is required for these changes.
+Do not change other settings during the first tests.
+
+Test separately, restarting Husk between tests:
+- Login: tap Sync, then the dialog's Sign in button. The account screen should
+  now be reachable if the callback issue was the blocker. Try one login and
+  collect the report. AccountActivity/LoginFragment and then Logging in are
+  useful milestones. Authentication may still reveal another compatibility bug.
+- Editor: open Add. The report should say Note Editor is in single-pane mode.
+  Enter a plain Basic note and save. Check the browser for the saved note.
+  Study/preview it separately; rendering may still fail independently.
+
+Validated on the host:
+- Original Message.obtain stub fails the regression test; fixed code passes.
+- Fixed Java framework compiles. Message payload, target, callback, and Bundle
+  independence are tested using the compiled framework classes.
+- Preview override probe checks preserved stored values, unrelated preferences,
+  and other apps using a host-only package-name shim.
+- All decoded framework method instructions compared against the original,
+  normalizing equivalent const-string/jumbo encodings: exactly three methods
+  changed semantically. All other retained IPA entries match the original except
+  the build label; ZIP integrity passed. Native executable bytes are unchanged.
+
+Not validated: iPad installation, login authentication, card saving, and WebView
+rendering. This is a resource-patched official IPA requiring re-signing, not a
+complete Xcode rebuild. ACRA and native TLS/unwind behavior are unchanged.

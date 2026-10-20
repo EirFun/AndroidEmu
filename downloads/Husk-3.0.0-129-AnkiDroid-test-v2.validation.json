@@ -1,0 +1,29 @@
+{
+  "original_ipa_sha256": "112a1ddbb3143ae25e80c18c5b195b6dfa5067d66cbf99d2188fc03f4ab0f61d",
+  "patched_ipa_sha256": "7c5e1f1f7d976edc22b833b52e532c7316c9d69ac966c3e448c4ff3339684918",
+  "size_bytes": 140078836,
+  "changed_framework_methods": [
+    [
+      "Landroid/os/Message;",
+      "obtain",
+      "(Landroid/os/Message;)Landroid/os/Message;"
+    ],
+    [
+      "Lhusk/AppRunner;",
+      "run",
+      "(Ljava/lang/String; Ljava/lang/String;)V"
+    ],
+    [
+      "Landroid/content/HuskSharedPreferences;",
+      "getBoolean",
+      "(Ljava/lang/String; Z)Z"
+    ]
+  ],
+  "patched_dex_sha256": "b3f4bc0ff07f4e1e63858b79d30629d0f698ac8a080e6c536f6ae40e815b348c",
+  "validation": "All decoded method instructions compared, normalizing equivalent const-string/jumbo forms; exactly three methods semantically changed; retained IPA entries compared; ZIP integrity passed",
+  "requires_resigning": true,
+  "device_tested": false,
+  "login_verified": false,
+  "editor_fix_verified": false,
+  "preview_override": "Reads false only for noteEditorShowPreviewer in com.ichi2.anki; stored preference unchanged"
+}

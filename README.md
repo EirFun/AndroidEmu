@@ -1,12 +1,12 @@
 # Husk
 
-This source copy includes an experimental **AnkiDroid startup fix** for Husk 3.0.0 build 129.
+This source copy includes an experimental **AnkiDroid test v2** for Husk 3.0.0 build 129.
 
-- [Download the patched IPA](https://github.com/EirFun/AndroidEmu/raw/refs/heads/husk-attachfix/downloads/Husk-3.0.0-129-attachfix-resign-required.ipa) — requires re-signing with your sideloader.
-- [Installation, backup, and test instructions](downloads/INSTALL.txt).
-- [Validation results](downloads/Husk-3.0.0-129-attachfix-resign-required.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
+- [Download test v2 IPA](https://github.com/EirFun/AndroidEmu/blob/husk-attachfix/downloads/Husk-3.0.0-129-AnkiDroid-test-v2.ipa) — click **Download raw file**, then re-sign with your sideloader.
+- [V2 installation and test instructions](downloads/ANKIDROID-V2.txt).
+- [V2 validation results](downloads/Husk-3.0.0-129-AnkiDroid-test-v2.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
 
-The IPA exchanges the two Application startup calls in the official release's Java framework. It is not a full native iOS rebuild. **AnkiWeb login and card editing are not yet verified.** Host Java compilation, a context-attachment probe, and archive/DEX integrity checks passed. Back up existing data before installing. This Java framework change applies to Husk's compatibility runtime, not Android running inside a full VM.
+V2 retains the startup fix, implements `Message.obtain(Message)` so AppCompat can deliver dialog button callbacks, and temporarily forces AnkiDroid's editor preview preference off without changing its stored value. The latter is a workaround to isolate the split-preview freeze, not a confirmed WebView fix. It is not a full native iOS rebuild. **AnkiWeb authentication and card saving are not yet verified on an iPad.** Java compilation, host message-copy and preference-isolation probes, and archive/DEX checks passed. Back up existing data before installing. These changes apply to Husk's Java compatibility runtime, not Android running inside a full VM.
 
 Upstream: [Leviidev/Husk](https://github.com/Leviidev/Husk), source base `2df074b3083ce2913922995f2f99249f1498b554`, with fix commit `7a0e0f3d2466dc2d3e77a6a2ad72676be0aff5a4`. Upstream history and license are retained. This repository is a source copy, not a GitHub-created fork.
 
