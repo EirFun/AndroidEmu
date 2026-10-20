@@ -1,0 +1,62 @@
+Husk AnkiDroid test v7: settings before navigation; whiteboard touch routing
+
+Download Husk-3.0.0-129-AnkiDroid-test-v7.ipa with Download raw file.
+Size: 140,081,105 bytes (about 140 MB). Install as an update through SideStore,
+re-enable JIT and fully restart Husk. Keep the existing AnkiDroid APK and data.
+Expected build label: dbc202a+ankidroid-test-v7.
+
+V6's report confirms every known reviewer asset was read from the APK, but the
+final inline 'Husk reviewer ready' console probe is absent and _showQuestion is
+still missing. Memory stays around 4 GB; no native fatal signal is recorded.
+WhiteboardFragment is created. Back finishes the reviewer and resumes DeckPicker
+internally, but the user reports an unresponsive screen and whiteboard controls.
+
+Two changes:
+1. Apply current WebView settings before loadUrl, postUrl, loadData and
+   loadDataWithBaseURL submit a native load. Previously setters posted a deferred
+   update, while creating a WebView immediately submitted the default JavaScript
+   value (false). AnkiDroid enables JavaScript and loads its page in the same call
+   stack. WebKit can start navigation before the deferred enable arrives. V7
+   submits the settings first. Explicit JavaScript=false is still honored;
+   JavaScript is not globally forced on. The host regression fails on v6 and
+   passes on v7, including disabled JavaScript and destroyed views. iPad WebKit
+   behavior is not yet verified. The absence of script execution on v6 fits this
+   ordering bug, but does not prove it is the only remaining cause.
+2. For com.ichi2.anki only, a visible laid-out new-reviewer WhiteboardView or
+   WhiteboardToolbar routes touches through Android instead of directly to
+   WebKit. The native WebView previously took all touches in its rectangle even
+   when these Android controls occupied that same window. Hiding/removing the
+   whiteboard restores normal WebKit input. Host geometry/name fixtures verify
+   this gate; they do not test drawing, actual touch delivery or iOS Pencil data.
+   Page scrolling/links intentionally do not receive native touches while the
+   whiteboard overlay is visible.
+
+Back freeze remains unresolved. V7 adds logs for native WebView frame visibility,
+touch eligibility and destruction. They help distinguish stale native page/input
+state from a different deck-list rendering or lifecycle failure. No separate
+Back fix is claimed. The earlier native socket/memory crash is also unchanged.
+
+Test one plain card in the same New study screen. First check question, Show
+answer and grading. Then toggle whiteboard and try toolbar controls and finger
+drawing. Test Apple Pencil separately: Husk still reports finger tool type, so
+stylus-only drawing can reject Pencil input. V7 does not fix Pencil identification.
+Finally press the top-left Back button and try selecting another deck.
+If anything stays blank or unresponsive, share the fresh full v7 report.
+
+Expected diagnostics:
+- loadDataWithBaseURL ... JavaScript=true
+- HuskAnkiAssets: inlined backend/js/reviewer.js (499345 bytes)
+- Husk reviewer ready: jquery=function _showQuestion=function
+- native frame id=... visible=... touchable=...
+- destroy native WebView id=... when leaving the reviewer
+Only state/asset metadata is added; diagnostics do not log card text or passwords.
+
+Validation: changed sources compile. Navigation-order regression and whiteboard
+input-gate tests pass on the host. V6's successful Chromium question/answer test
+still establishes only desktop script behavior. DEX comparison finds exactly six
+changed WebView methods plus the three new whiteboard helper methods. Existing
+lambda classes and references are preserved. Other existing methods, native
+executables and retained IPA entries match v6 except the build label. ZIP
+integrity passed. All earlier startup, login, storage, editor, ACRA and inline
+asset changes are retained. This patches the Java DEX in the official IPA; it is
+not a full native iOS rebuild and is not yet device-tested.

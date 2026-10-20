@@ -1,0 +1,63 @@
+{
+  "v6_ipa_sha256": "c23acb84f895236e7cdd83abc2f8952ebcc261d9ce41287affaad60a2853b27c",
+  "patched_ipa_sha256": "e0c958cf1844099b512e012b5bff0ca03725d0e24bca320c4f6e7e35d21b230a",
+  "size_bytes": 140081105,
+  "added_framework_methods": [
+    [
+      "Lhusk/AnkiWhiteboardInput;",
+      "<init>",
+      "()V"
+    ],
+    [
+      "Lhusk/AnkiWhiteboardInput;",
+      "blocksNativeWebTouches",
+      "(Landroid/view/View;)Z"
+    ],
+    [
+      "Lhusk/AnkiWhiteboardInput;",
+      "hasVisibleWhiteboard",
+      "(Landroid/view/View;)Z"
+    ]
+  ],
+  "changed_existing_methods": [
+    [
+      "Landroid/webkit/WebView;",
+      "load",
+      "(Ljava/lang/String; Ljava/util/Map;)V"
+    ],
+    [
+      "Landroid/webkit/WebView;",
+      "updateFrame",
+      "(Z)V"
+    ],
+    [
+      "Landroid/webkit/WebView;",
+      "destroy",
+      "()V"
+    ],
+    [
+      "Landroid/webkit/WebView;",
+      "loadData",
+      "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String;)V"
+    ],
+    [
+      "Landroid/webkit/WebView;",
+      "loadDataWithBaseURL",
+      "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String;)V"
+    ],
+    [
+      "Landroid/webkit/WebView;",
+      "postUrl",
+      "(Ljava/lang/String; [B)V"
+    ]
+  ],
+  "compiled_dex_sha256": "5b33ebc85251ac50ddd9454e5aeabd172c9366f5e5a051f557ba3881caafe09e",
+  "validation": "Only six intended WebView methods and the new compiled AnkiWhiteboardInput helper differ from v6; all other existing methods and retained IPA entries compared; ZIP integrity passed",
+  "requires_resigning": true,
+  "device_tested": false,
+  "reviewer_script_loading_device_verified": false,
+  "native_socket_crash_fixed": false,
+  "pencil_tool_type_fixed": false,
+  "whiteboard_input_device_verified": false,
+  "back_freeze_fixed": false
+}

@@ -1,12 +1,12 @@
 # Husk
 
-This source copy includes an experimental **AnkiDroid test v6** for Husk 3.0.0 build 129.
+This source copy includes an experimental **AnkiDroid test v7** for Husk 3.0.0 build 129.
 
-- [Download test v6 IPA](https://github.com/EirFun/AndroidEmu/blob/husk-attachfix/downloads/Husk-3.0.0-129-AnkiDroid-test-v6.ipa) — click **Download raw file**, then re-sign with your sideloader.
-- [V6 installation and test instructions](downloads/ANKIDROID-V6.txt).
-- [V6 validation results](downloads/Husk-3.0.0-129-AnkiDroid-test-v6.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
+- [Download test v7 IPA](https://github.com/EirFun/AndroidEmu/blob/husk-attachfix/downloads/Husk-3.0.0-129-AnkiDroid-test-v7.ipa) — click **Download raw file**, then re-sign with your sideloader.
+- [V7 installation and test instructions](downloads/ANKIDROID-V7.txt).
+- [V7 validation results](downloads/Husk-3.0.0-129-AnkiDroid-test-v7.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
 
-V5 still produced a blank reviewer with `_showQuestion` missing. V6 reads the known AnkiDroid reviewer scripts and styles directly from the APK and inlines them into the HTML, avoiding the failing asset-request path. New logs report asset reads and reviewer-function readiness. Host tests using the actual official APK render a plain question and answer in Chromium; **iPad WebKit still needs testing**. All earlier fixes are retained. Apple Pencil support and the earlier native socket/memory crash remain unresolved. Compilation, archive integrity and DEX comparisons passed. This is a Java resource patch to the official IPA, not a full native iOS rebuild. Install as an update with existing data backed up.
+V6 read all reviewer scripts from the APK but still showed no script readiness and an empty card. V7 applies current WebView settings before navigation, closing a deferred-settings ordering gap that can start the page with JavaScript disabled. It also routes touches through Android while AnkiDroid's new whiteboard overlay is visible, so the native WebView does not take touches intended for the canvas and toolbar. Host regressions pass; **iPad behavior still needs testing**. Back-button freezing remains unresolved, with new frame/destruction diagnostics to investigate it. Pencil identification and the earlier native socket/memory crash are unchanged. All earlier fixes are retained. Compilation, ZIP integrity and DEX comparisons passed. This is a Java resource patch to the official IPA, not a full native iOS rebuild. Install as an update with existing data backed up.
 
 Upstream: [Leviidev/Husk](https://github.com/Leviidev/Husk), source base `2df074b3083ce2913922995f2f99249f1498b554`, with fix commit `7a0e0f3d2466dc2d3e77a6a2ad72676be0aff5a4`. Upstream history and license are retained. This repository is a source copy, not a GitHub-created fork.
 
