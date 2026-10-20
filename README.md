@@ -1,12 +1,12 @@
 # Husk
 
-This source copy includes an experimental **AnkiDroid test v5** for Husk 3.0.0 build 129.
+This source copy includes an experimental **AnkiDroid test v6** for Husk 3.0.0 build 129.
 
-- [Download test v5 IPA](https://github.com/EirFun/AndroidEmu/blob/husk-attachfix/downloads/Husk-3.0.0-129-AnkiDroid-test-v5.ipa) — click **Download raw file**, then re-sign with your sideloader.
-- [V5 installation and test instructions](downloads/ANKIDROID-V5.txt).
-- [V5 validation results](downloads/Husk-3.0.0-129-AnkiDroid-test-v5.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
+- [Download test v6 IPA](https://github.com/EirFun/AndroidEmu/blob/husk-attachfix/downloads/Husk-3.0.0-129-AnkiDroid-test-v6.ipa) — click **Download raw file**, then re-sign with your sideloader.
+- [V6 installation and test instructions](downloads/ANKIDROID-V6.txt).
+- [V6 validation results](downloads/Husk-3.0.0-129-AnkiDroid-test-v6.validation.json) and [SHA-256 checksums](downloads/SHA256SUMS.txt).
 
-V5 targets the missing `_showQuestion` error in the new study screen: HTML's embedded `file:///android_asset/` script and style URLs now use Husk's existing WebKit asset scheme and APK handler. It retains all earlier startup, login dialog, editor, collection-path and ACRA workarounds. The latest v4 report confirms ACRA reporting is disabled and memory remains healthy during this particular failure. **V5 needs device testing; the earlier native socket/memory crash and Apple Pencil support remain unresolved.** Compilation, host HTML tests, archive integrity and DEX comparisons passed. Only the WebView HTML-loading method and its new helper differ from v4, alongside the build label. This is a Java resource patch to the official IPA, not a full native iOS rebuild. Install as an update with existing data backed up.
+V5 still produced a blank reviewer with `_showQuestion` missing. V6 reads the known AnkiDroid reviewer scripts and styles directly from the APK and inlines them into the HTML, avoiding the failing asset-request path. New logs report asset reads and reviewer-function readiness. Host tests using the actual official APK render a plain question and answer in Chromium; **iPad WebKit still needs testing**. All earlier fixes are retained. Apple Pencil support and the earlier native socket/memory crash remain unresolved. Compilation, archive integrity and DEX comparisons passed. This is a Java resource patch to the official IPA, not a full native iOS rebuild. Install as an update with existing data backed up.
 
 Upstream: [Leviidev/Husk](https://github.com/Leviidev/Husk), source base `2df074b3083ce2913922995f2f99249f1498b554`, with fix commit `7a0e0f3d2466dc2d3e77a6a2ad72676be0aff5a4`. Upstream history and license are retained. This repository is a source copy, not a GitHub-created fork.
 

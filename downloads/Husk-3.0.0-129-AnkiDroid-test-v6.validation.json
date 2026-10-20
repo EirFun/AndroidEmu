@@ -1,0 +1,51 @@
+{
+  "v5_ipa_sha256": "6ac90e635143298cda1e3e41c493728c4be51fc487ff1ef49cc1b2d42c3837dd",
+  "patched_ipa_sha256": "c23acb84f895236e7cdd83abc2f8952ebcc261d9ce41287affaad60a2853b27c",
+  "size_bytes": 140080704,
+  "added_framework_methods": [
+    [
+      "Lhusk/AnkiReviewerAssets;",
+      "<clinit>",
+      "()V"
+    ],
+    [
+      "Lhusk/AnkiReviewerAssets;",
+      "<init>",
+      "()V"
+    ],
+    [
+      "Lhusk/AnkiReviewerAssets;",
+      "allowed",
+      "(Ljava/lang/String; Z)Z"
+    ],
+    [
+      "Lhusk/AnkiReviewerAssets;",
+      "inline",
+      "(Ljava/lang/String; Ljava/util/regex/Pattern; I Z)Ljava/lang/String;"
+    ],
+    [
+      "Lhusk/AnkiReviewerAssets;",
+      "isHtml",
+      "(Ljava/lang/String;)Z"
+    ],
+    [
+      "Lhusk/AnkiReviewerAssets;",
+      "prepare",
+      "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"
+    ]
+  ],
+  "changed_existing_methods": [
+    [
+      "Landroid/webkit/WebView;",
+      "loadDataWithBaseURL",
+      "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String;)V"
+    ]
+  ],
+  "helper_dex_sha256": "fc3682e39537ad524eafac6b73f2e21bfd7af8496b8cfcd99c09ac5ad4905ac0",
+  "validation": "Only WebView.loadDataWithBaseURL and the new compiled AnkiReviewerAssets helper differ from v5; all other existing methods and retained IPA entries compared; ZIP integrity passed",
+  "requires_resigning": true,
+  "device_tested": false,
+  "reviewer_script_loading_device_verified": false,
+  "native_socket_crash_fixed": false,
+  "pencil_support_fixed": false
+}

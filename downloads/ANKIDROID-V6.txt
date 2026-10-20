@@ -1,0 +1,50 @@
+Husk AnkiDroid test v6: inline known APK reviewer assets, log readiness
+
+Download Husk-3.0.0-129-AnkiDroid-test-v6.ipa using Download raw file.
+Size: 140,080,704 bytes (about 140 MB). Install as an update through SideStore,
+re-enable JIT and fully restart Husk. Keep the existing APK and collection.
+Expected label: dbc202a+ankidroid-test-v6. No uninstall or data reset is needed.
+
+The v5 report still shows _showQuestion missing, healthy memory near 4 GB and no
+native fatal signal. The reviewer opens and can return to the deck list; this
+report does not demonstrate a whole-process deadlock. The user also reports that
+the whiteboard menu is now reachable, while the card is empty.
+
+The official APK contains backend/js/reviewer.js, which exports _showQuestion.
+V5's scheme rewrite did not solve its initialization. The report does not show
+whether WebKit blocked a request, the asset handler failed, or a script failed
+before exporting its functions. V6 avoids that unresolved request path for the
+known reviewer scripts and styles by reading their bytes directly from the APK
+and inlining them into the HTML before passing it to WebKit.
+
+This workaround is limited to com.ichi2.anki and HTML. It inlines the known
+synchronous classic scripts from stdHtml: jquery.min.js, reviewer.js,
+ankidroid-cardviewer.js, ankidroid-reviewer.js and type-answer.js, and the known
+root-vars.css, reviewer.css and ankidroid.css links. It preserves their order.
+Unlisted scripts, modules, deferred/async scripts and remote URLs are not
+inlined. Missing assets retain the v5 URL fallback and produce a warning.
+No downloaded replacement scripts or dummy reviewer functions are supplied.
+
+Look for these new diagnostic messages in the next report:
+- HuskAnkiAssets: inlined backend/js/reviewer.js (499345 bytes)
+- Husk reviewer ready: jquery=function _showQuestion=function
+- A missing APK asset warning or a JavaScript exception identifies another
+  failure. The diagnostics do not include card text or credentials.
+
+Validation: helper and WebView compile; host tests exercise inlining, escaping HTML end tags, missing assets, other apps, non-HTML and special script semantics.
+A fixture produced from the actual official APK initializes its reviewer scripts
+and renders a plain question and answer in desktop Chromium. That host test
+substitutes only the app's keyboard bridge; this substitute is not in the IPA.
+Desktop Chromium is not an iPad WebKit validation. DEX comparison confirms only
+WebView.loadDataWithBaseURL changed, plus the new helper class. Native binaries
+and other retained IPA entries match v5 except the build label. ZIP checks pass.
+
+All v5 startup/login/storage/editor/ACRA fixes are retained. Apple Pencil support,
+the earlier native socket/memory crash, full media rendering, and the new iPad
+behavior remain unverified or unresolved. This modifies the Java framework DEX
+in the official IPA; it is not a full native iOS rebuild.
+
+Test the same deck with New study screen enabled: question, Show answer, grading.
+If it remains empty, send a fresh full report from v6 so the new diagnostics can
+be inspected. Once review works, test whiteboard drawing with a finger and then
+Apple Pencil; menu visibility alone does not establish drawing support.
