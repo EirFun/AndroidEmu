@@ -218,7 +218,7 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
     public void loadDataWithBaseURL(String baseUrl, String data, String mimeType, String encoding, String historyUrl) {
         if (mDestroyed) return;
         Log.d(TAG, "loadDataWithBaseURL " + baseUrl);
-        byte[] bytes = (data == null ? "" : data).getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        byte[] bytes = husk.HtmlResourceUrls.rewrite(data, mimeType).getBytes(java.nio.charset.StandardCharsets.UTF_8);
         String base = baseUrl == null || baseUrl.startsWith("data:") ? null : baseUrl;
         mUrl = historyUrl != null ? historyUrl : base != null ? base : "about:blank";
         husk.Web.loadData(mId, bytes, mimeType == null || mimeType.isEmpty() ? "text/html" : mimeType, "utf-8", base == null ? null : toHost(base));
