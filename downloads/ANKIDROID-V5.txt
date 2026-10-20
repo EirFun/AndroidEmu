@@ -1,0 +1,44 @@
+Husk AnkiDroid test v5: route embedded reviewer scripts to APK assets
+
+Download Husk-3.0.0-129-AnkiDroid-test-v5.ipa using GitHub's Download raw file
+button. Size: 140,079,371 bytes (about 140 MB). Install through SideStore as an
+update, re-enable JIT, fully close Husk, then reopen. Keep your existing APK and
+collection. Uninstalling or clearing AnkiDroid data is not required.
+Expected build label: dbc202a+ankidroid-test-v5.
+
+The latest v4 report confirms Crash Reports Enabled=false, Low resolution,
+and available memory around 3.9 GB. It opens CardViewerActivity/ReviewerFragment
+(the new study screen), then reports:
+  Uncaught ReferenceError: Can't find variable: _showQuestion
+This is a JavaScript initialization failure. That run contains no native fatal
+signal; it does not establish that the earlier socket/memory crash is fixed.
+
+AnkiDroid's HTML includes reviewer.js, jquery.min.js and other scripts using
+file:///android_asset/... URLs. Husk already translates top-level asset loads
+into huskapp://android_asset/... and serves them from the APK, but previously
+passed the embedded HTML URLs unchanged to WebKit.
+
+V5 rewrites those Android asset URL prefixes in HTML passed to
+loadDataWithBaseURL, using the existing registered WebKit scheme and APK asset
+handler. Android resource URL prefixes follow the existing top-level conversion
+as well; this does not implement the separate, currently missing android_res
+resource serving. Network URLs and ordinary local-file URLs are unchanged.
+The patch does not define a dummy _showQuestion or bypass TLS checks.
+
+V5 retains the startup, dialog-copy, single-pane editor, collection-path and
+ACRA workarounds. It does not add Apple Pencil support or fix the earlier native
+socket/memory crash. It is a Java resource patch to the official Husk IPA;
+there is no native iOS rebuild and no on-device validation of this new patch.
+
+Host checks: changed WebView and helper compile; reviewer HTML fixture routes
+script/style assets, handles MIME parameters and leaves other URLs/content
+unchanged. DEX comparison shows only loadDataWithBaseURL changed, plus the two
+new helper methods; all other existing methods match v4. All retained IPA
+entries except the framework DEX and build label match v4. ZIP integrity passes.
+See the accompanying validation JSON and SHA256SUMS.txt.
+
+Test the same deck with New study screen still enabled, preferably with one
+plain text card first. Check question display, Show answer, then grading.
+If it still stalls, share a fresh full Husk report after this attempt so we can
+check whether _showQuestion remains missing or a later failure appears.
+Whiteboard/Pencil behavior needs separate testing once review works.

@@ -1,0 +1,31 @@
+{
+  "v4_ipa_sha256": "4db13ae8584fe2051440e8af2901c225bb8902f8a5330fd30160d602f50292ad",
+  "patched_ipa_sha256": "6ac90e635143298cda1e3e41c493728c4be51fc487ff1ef49cc1b2d42c3837dd",
+  "size_bytes": 140079371,
+  "added_framework_methods": [
+    [
+      "Lhusk/HtmlResourceUrls;",
+      "<init>",
+      "()V"
+    ],
+    [
+      "Lhusk/HtmlResourceUrls;",
+      "rewrite",
+      "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"
+    ]
+  ],
+  "changed_existing_methods": [
+    [
+      "Landroid/webkit/WebView;",
+      "loadDataWithBaseURL",
+      "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String;)V"
+    ]
+  ],
+  "helper_dex_sha256": "f2da934c4ea2b6fa6945c23ca7ba87ee270b3280b340a67cb67faa9ccea24eb2",
+  "validation": "Only WebView.loadDataWithBaseURL and the new compiled URL helper differ from v4; all other existing methods and retained IPA entries compared; ZIP integrity passed",
+  "requires_resigning": true,
+  "device_tested": false,
+  "reviewer_script_loading_device_verified": false,
+  "native_socket_crash_fixed": false,
+  "pencil_support_fixed": false
+}
