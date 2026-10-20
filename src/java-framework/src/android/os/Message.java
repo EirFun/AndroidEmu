@@ -10,6 +10,21 @@ public final class Message {
     Message next;
     public Message() {}
     public static Message obtain() { return new Message(); }
+    /** Copy the payload and delivery target, as used by AppCompat dialog buttons. */
+    public static Message obtain(Message original) {
+        Message m = obtain();
+        m.what = original.what;
+        m.arg1 = original.arg1;
+        m.arg2 = original.arg2;
+        m.obj = original.obj;
+        m.replyTo = original.replyTo;
+        m.sendingUid = original.sendingUid;
+        m.workSourceUid = original.workSourceUid;
+        m.target = original.target;
+        m.callback = original.callback;
+        if (original.data != null) m.data = new Bundle(original.data);
+        return m;
+    }
     public static Message obtain(Handler h) { Message m = new Message(); m.target = h; return m; }
     public static Message obtain(Handler h, int what) { Message m = obtain(h); m.what = what; return m; }
     public static Message obtain(Handler h, int what, Object obj) { Message m = obtain(h, what); m.obj = obj; return m; }
@@ -33,7 +48,6 @@ public final class Message {
     public android.os.Messenger replyTo;
     public int sendingUid;
     public int workSourceUid;
-    public static android.os.Message obtain(android.os.Message p0) { return null; }
     public void copyFrom(android.os.Message p0) {}
     public int describeContents() { return 0; }
     public long getWhen() { return 0L; }
