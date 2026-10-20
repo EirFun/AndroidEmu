@@ -228,6 +228,12 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
         Log.d(TAG, "loadDataWithBaseURL " + baseUrl + " JavaScript=" + mSettings.getJavaScriptEnabled());
         byte[] bytes = husk.AnkiReviewerAssets.prepare(data, mimeType).getBytes(java.nio.charset.StandardCharsets.UTF_8);
         String base = baseUrl == null || baseUrl.startsWith("data:") ? null : baseUrl;
+        if ("com.ichi2.anki".equals(husk.Native.packageName()) && base != null
+                && base.matches("http://127\\.0\\.0\\.1:[0-9]+/")) {
+            // Reviewer GETs (MathJax and media) must reach shouldInterceptRequest.
+            synchronized (this) { mLocalSchemes.put("127.0.0.1", "http"); }
+            Log.d(TAG, "AnkiDroid reviewer localhost routed through Android resource handler");
+        }
         mUrl = historyUrl != null ? historyUrl : base != null ? base : "about:blank";
         husk.Web.loadData(mId, bytes, mimeType == null || mimeType.isEmpty() ? "text/html" : mimeType, "utf-8", base == null ? null : toHost(base));
     }
@@ -236,7 +242,7 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
         if (mDestroyed || script == null) return;
         int cb = 0;
         if (resultCallback != null) synchronized (mEvalCallbacks) { cb = mNextCallback++; mEvalCallbacks.put(cb, resultCallback); }
-        husk.Web.eval(mId, script, cb);
+        husk.Web.eval(mId, husk.AnkiReviewerAssets.withDiagnostics(script), cb);
     }
     public void stopLoading() { if (!mDestroyed) husk.Web.go(mId, 3); }
     public void reload() { if (!mDestroyed) husk.Web.go(mId, 2); }
@@ -588,6 +594,10 @@ public class WebView extends AbsoluteLayout implements android.view.ViewTreeObse
     }
     private void serve(int call, String hostUrl, String method, boolean main, Map<String, String> headers) {
         String url = fromHost(hostUrl);
+        if ("com.ichi2.anki".equals(husk.Native.packageName())) {
+            String path = Uri.parse(url).getPath();
+            if (path != null && path.startsWith("/_anki/")) Log.d(TAG, "reviewer resource " + method + " " + path);
+        }
         WebResourceResponse r;
         synchronized (this) { r = main ? mPrimed.remove(hostUrl) : null; }
         if (r == null) r = intercept(url, method, main, headers);

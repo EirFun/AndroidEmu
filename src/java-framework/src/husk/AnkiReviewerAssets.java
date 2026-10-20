@@ -18,6 +18,7 @@ public final class AnkiReviewerAssets {
     public static String prepare(String data, String mimeType) {
         String html = HtmlResourceUrls.rewrite(data, mimeType);
         if (!"com.ichi2.anki".equals(Native.packageName()) || !isHtml(mimeType)) return html;
+        AnkiSocketDiagnostics.install();
         // Only the known, synchronous classic scripts from AnkiDroid's stdHtml are inlined.
         // Card-template scripts, remote URLs, modules and deferred scripts are left alone.
         html = inline(html, SCRIPT, 2, true);
@@ -26,6 +27,14 @@ public final class AnkiReviewerAssets {
         int end = html.toLowerCase(java.util.Locale.ROOT).lastIndexOf("</body>");
         if (end >= 0) html = html.substring(0, end) + probe + html.substring(end);
         return html;
+    }
+
+    /** Log only DOM sizes/state, never card contents. Timers run in WebKit, not the guest JVM. */
+    public static String withDiagnostics(String script) {
+        if (!"com.ichi2.anki".equals(Native.packageName())
+                || !(script.startsWith("_showQuestion(") || script.startsWith("_showAnswer("))) return script;
+        String probe = "var q=document.getElementById('qa'); console.log('Husk card DOM: '+JSON.stringify({qa:!!q,textLength:q?q.textContent.length:0,htmlLength:q?q.innerHTML.length:0,opacity:q?getComputedStyle(q).opacity:null,mathjax:typeof MathJax,origin:location.protocol}));";
+        return script + "\nsetTimeout(function(){" + probe + "},1500);setTimeout(function(){" + probe + "},6000);";
     }
 
     private static boolean isHtml(String mimeType) {

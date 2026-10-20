@@ -3,6 +3,7 @@
 // Requires Playwright and Chromium; this checks desktop JS execution, not iOS WebKit.
 const { chromium } = require('playwright');
 const fs = require('fs');
+const path = require('path');
 
 (async () => {
     const browser = await chromium.launch({
@@ -17,7 +18,22 @@ const fs = require('fs');
         page.on('pageerror', error => errors.push(error.message));
         // Host-only substitute for the app's Android keyboard bridge. Never shipped in the IPA.
         const keyboard = '<script>window.AnkiDroidKeyboard={setNoSuggest:function(){}};</script>';
-        await page.setContent(keyboard + fs.readFileSync(process.argv[2], 'utf8'), {
+        let base = '';
+        if (process.argv[3]) {
+            const assets = path.resolve(process.argv[3]);
+            base = '<base href="http://127.0.0.1:52717/">';
+            await page.route('http://127.0.0.1:52717/**', async route => {
+                const pathname = new URL(route.request().url()).pathname;
+                const prefix = '/_anki/js/';
+                const file = pathname.startsWith(prefix) ? path.resolve(assets, pathname.slice(prefix.length)) : '';
+                if (!file.startsWith(assets + path.sep) || !fs.existsSync(file)) {
+                    await route.fulfill({ status: 404, body: '' });
+                    return;
+                }
+                await route.fulfill({ contentType: file.endsWith('.js') ? 'application/javascript' : 'application/octet-stream', body: fs.readFileSync(file) });
+            });
+        }
+        await page.setContent(base + keyboard + fs.readFileSync(process.argv[2], 'utf8'), {
             waitUntil: 'domcontentloaded', timeout: 15000,
         });
         const exports = await page.evaluate(() => ({ question: typeof _showQuestion, answer: typeof _showAnswer }));
@@ -28,6 +44,11 @@ const fs = require('fs');
         await page.evaluate(() => _showAnswer('<div id="host-answer">Answer text</div>', 'card'));
         await page.waitForSelector('#host-answer', { timeout: 5000 });
         if (await page.locator('#qa').textContent() !== 'Answer text') throw new Error('Answer did not render');
+        if (process.argv[3]) {
+            await page.evaluate(() => _showQuestion('<div id="math-question">Solve \\(x+1=2\\)</div>', 'x=1', 'card'));
+            await page.waitForSelector('#math-question mjx-container', { timeout: 15000 });
+            console.log('PASS: official APK MathJax renders a math card through reviewer resource URL mapping');
+        }
         if (errors.length) throw new Error(errors.join('\n'));
         console.log('PASS: actual APK reviewer scripts initialize and render a plain question and answer in Chromium');
     } finally {

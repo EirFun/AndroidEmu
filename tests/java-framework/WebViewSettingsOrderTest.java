@@ -27,6 +27,18 @@ public final class WebViewSettingsOrderTest {
             check(() -> view.loadUrl("file:///android_asset/index.html"), "load", enabled);
             check(() -> view.postUrl("file:///android_asset/index.html", new byte[0]), "load", enabled);
         }
+        Native.currentPackage = "com.ichi2.anki";
+        view.loadDataWithBaseURL("http://127.0.0.1:57249/", "<html></html>", "text/html", null, null);
+        require("huskapp://127.0.0.1:57249/".equals(Web.lastBaseUrl), "Anki reviewer resources must use the Android interceptor");
+        java.lang.reflect.Method fromHost = WebView.class.getDeclaredMethod("fromHost", String.class);
+        fromHost.setAccessible(true);
+        require("http://127.0.0.1:57249/_anki/js/mathjax.js".equals(fromHost.invoke(view, "huskapp://127.0.0.1:57249/_anki/js/mathjax.js")), "Resource callback must restore original localhost URL");
+        view.loadDataWithBaseURL("https://example.com/", "", "text/html", null, null);
+        require("https://example.com/".equals(Web.lastBaseUrl), "Remote origins must remain unchanged");
+        set(view, "mLocalSchemes", new HashMap<String, String>());
+        Native.currentPackage = "another.app";
+        view.loadDataWithBaseURL("http://127.0.0.1:57249/", "", "text/html", null, null);
+        require("http://127.0.0.1:57249/".equals(Web.lastBaseUrl), "Other apps must retain localhost behavior");
         set(view, "mDestroyed", true);
         Web.events.clear();
         view.loadData("", "text/html", null);
@@ -34,7 +46,7 @@ public final class WebViewSettingsOrderTest {
         view.loadUrl("file:///android_asset/index.html");
         view.postUrl("file:///android_asset/index.html", null);
         require(Web.events.isEmpty(), "Destroyed views must not push settings or load pages");
-        System.out.println("PASS: all four navigation paths submit the current JavaScript preference before loading, including explicit false");
+        System.out.println("PASS: all four navigation paths submit the current JavaScript preference before loading, including explicit false; Anki localhost resources route correctly");
     }
 
     private static void check(Runnable navigate, String load, boolean enabled) {
