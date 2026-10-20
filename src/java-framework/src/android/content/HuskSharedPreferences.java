@@ -58,6 +58,9 @@ public final class HuskSharedPreferences implements SharedPreferences {
     }
     public synchronized Map<String, ?> getAll() { return new HashMap<>(map); }
     public synchronized String getString(String k, String d) {
+        // AnkiDroid's ACRA service discovery currently throws under Husk and exits the app.
+        // "1" is AnkiDroid's supported "never report" mode; keep the saved choice untouched.
+        if ("reportErrorMode".equals(k) && "com.ichi2.anki".equals(husk.Native.packageName())) return "1";
         Object v = map.get(k);
         return v instanceof String ? husk.AnkiStoragePath.forPreference(k, (String) v) : d;
     }
